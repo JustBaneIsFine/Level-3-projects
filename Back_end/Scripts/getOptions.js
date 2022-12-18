@@ -165,7 +165,7 @@ async function getMakeKupujem()
 		await page.setRequestInterception(true);
 		page.setDefaultNavigationTimeout(0);
 
-		data = page.waitForSelector('#groupSecondSelection',{timeout:15000})
+		data = page.waitForSelector('.Button_children__3mYJw',{timeout:15000})
 		.then(
 				()=>{
 
@@ -186,6 +186,8 @@ async function getMakeKupujem()
 
 
 								var makeData = [];
+								var searcDetailed = document.getElementsByClassName('Button_children__3mYJw');
+								await searcDetailed.click();
 								var clickableMakeDiv = document.getElementById('groupSecondSelection').childNodes[1];
 								await clickableMakeDiv.click();
 								var makeOptionsNodeList = clickableMakeDiv.childNodes[3].querySelectorAll('.uiMenuItem');
