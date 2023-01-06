@@ -60,7 +60,6 @@ async function loadHandlerKupujem(urla,numOfPages)
 	{
 		numberOfPages = numOfPages;
 
-
 		console.log("KUPUJEM LOADING")
  
 		while(pageCounter<numOfPages)
@@ -73,18 +72,11 @@ async function loadHandlerKupujem(urla,numOfPages)
 				for (let i=0;i<amount;i++)
 					{
 
-						if (urla.includes('[page]'))
+						if (urla.includes('page=1'))
 							{
-								url = urla.replace('[page]=2',`[page]=${pageCounter+1}`);
+								url = urla.replace('page=1',`page=${pageCounter+1}`);
 							}
-						else if (urla.includes('%5Bpage%5D'))
-							{
-								url = urla.replace('%5Bpage%5D=2',`%5Bpage%5D=${pageCounter+1}`); 
-							}
-						else
-							{
-								url = urla;
-							}
+						
 						pageCounter++;
 
 						store[i] = handleLoadingAndFailiure(url,"kupujem");
@@ -108,7 +100,8 @@ async function loadHandlerKupujem(urla,numOfPages)
 	}
 
 async function loadHandlerPolovni(urla,numOfPages)
-	{
+	{	
+		console.log(numOfPages)
 		numberOfPages = numOfPages;
 		console.log("POLOVNI LOADING")
 		while(pageCounter<numOfPages)
@@ -121,7 +114,7 @@ async function loadHandlerPolovni(urla,numOfPages)
 				for (let i=0;i<amount;i++)
 					{
 
-						var url = urla.replace('page=2',`page=${pageCounter+1}`);
+						var url = urla.replace('page=1',`page=${pageCounter+1}`);
 						pageCounter++;
 
 						store[i] = handleLoadingAndFailiure(url,"polovni");

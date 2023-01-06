@@ -112,7 +112,6 @@ app.post('/getData',jsonParser, async (req,res)=>{
 
 	var dataToGet = req.body;	
 	var length = Object.keys(dataToGet).length;
-
 	if(length === 2 )
 		{	
 			var w1Num = await getPageNum(dataToGet['web1'],websiteChoice1);
