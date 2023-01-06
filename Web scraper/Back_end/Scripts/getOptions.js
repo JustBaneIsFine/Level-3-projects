@@ -1,11 +1,4 @@
 import * as cheerio from 'cheerio';
-
-
-
-// IMPORT CHERIO AND USE IT TO PARSE AND GET THE DATA FROM HTML RESPONSE __________________________________________________________
-//_______________________
-//_______________________
-
 import puppeteer from 'puppeteer';
 //cSpell: disable
 var contentLoaded = false;
@@ -36,7 +29,6 @@ export async function getWebsiteModel(website,make)
 			{
 				contentLoaded = false;
 				var model = await handlerFunction(getModelPolovni,make);
-				console.log(model);
 				return model;
 			}
 
@@ -51,6 +43,7 @@ export async function getWebsiteModel(website,make)
 
 export async function getWebsiteYear(website,make,model)
 	{
+		//set make and model
 
 		if (website === "polovni")
 			{	
@@ -71,9 +64,8 @@ export async function getWebsiteYear(website,make,model)
 
 async function getMakePolovni()
 	{
-
 		// POLOVNI DOES NOT FETCH MAKE, BUT IT DOES FETCH MODELS
-		var data;
+		let data;
 
 		try {
 
@@ -81,22 +73,20 @@ async function getMakePolovni()
 		const browser = await puppeteer.launch({headless:true});
 		const page = await browser.newPage();
 		await page.goto(urlPolovni,{waitUntil: 'domcontentloaded'});
-		
+
 		data = await page.evaluate(()=>{
 			const optionsArray = document.getElementById('brand').options;
 			const options = [];
 			for (let i=1;i<optionsArray.length;i++){
-				options.push(optionsArray[i].innerText);
+				options.push({'name':optionsArray[i].innerText});
 			}
 			return options;
 		})
 		
-
-		
 		await browser.close();		
 
-	} catch(e){};
-
+	} catch(e){console.log(e)};
+	console.log(data);
 	return data;
 	}
 
@@ -109,9 +99,9 @@ async function getMakeKupujem()
 		//start up browser and open page
 		const browser = await puppeteer.launch({headless:true});
 		const page = await browser.newPage();
-		await page.goto(urlKupujem);
+		await page.goto(urlKupujem,{waitUntil:'domcontentloaded'});
 		
-		// catch and save the response data
+		// catch the response and pull out data
 		const [response] = await Promise.all([
 			page.waitForResponse(async(response) => {
 					if(
@@ -127,16 +117,16 @@ async function getMakeKupujem()
 
 		await browser.close();		
 
-	} catch(e){};
+	} catch(e){console.log(e)};
 
 	if(data.categories.length>1){
 		const resultArray = [];
 		data.categories.forEach(x=>{
-			resultArray.push(x.name);
+			resultArray.push({'name':x.name, 'id':x.id});
 		})
 		return resultArray;
 	} else{
-		return false
+		return false;
 	}
 
 
@@ -151,47 +141,29 @@ async function getModelPolovni(make)
 
 		//start up browser and open page
 		const browser = await puppeteer.launch({headless:true});
-
 		const page = await browser.newPage();
-		await page.setViewport({
-			width: 1200,
-			height: 600,
-			deviceScaleFactor: 1,
-		  });
 		await page.goto(urlPolovni,{waitUntil: 'domcontentloaded'});
-		console.log('page loaded')
+
+
 		await page.click('.sumo_brand');
-		console.log('clicked')
 		await page.waitForSelector('.sumo_brand .search-txt');
-		console.log('selector found');
 		await page.type('.sumo_brand .search-txt', make);
-		console.log('screenshot-start after type')
-		await page.screenshot({path:'./pictureAFTERTYPEPOLOVNI.png',fullPage:true});
-		console.log('screenshot-end')
-
-	
-
-		
 
 		// catch and save the response data
 		const [response] = await Promise.all([
 			page.waitForResponse(async(response) => {
-				
-				console.log('waiting for response')
 					if(
 						response.url().includes('models'))
 						{
-							console.log('got response')
 							let dataRes = await response.text();
 							const $ = cheerio.load(dataRes);
 							const options = $('option');
 							const arrayOptions = [];
 							$(options).each((i,e)=>{
-								arrayOptions.push($(e).text().trim());
+								arrayOptions.push({'name':$(e).text().trim()});
 							})
 							//$(options[0]).text().trim()
 							data = arrayOptions;
-
 							return true;
 						}
 				}),
@@ -215,40 +187,32 @@ async function getModelPolovni(make)
 				},make)
 			
 		])
-		console.log('response and click done')
 		await browser.close();	
 		return data;
 
 	} catch(e){console.log(e)};
-	console.log(data);
 	return data;
 
 	}
 
 async function getModelKupujem(make)	
 	{ 
-		//click on this: ::::::::::::::  div.Grid_col-lg-4__fPwt2:nth-child(1) > span:nth-child(2) > div:nth-child(2)
-		// then this will become available after clicking ::::::::   'div.Grid_col-lg-4__fPwt2:nth-child(1) > span:nth-child(2) > div:nth-child(2)'  
 		var data;
+
+
 
 		try {
 
 		//start up browser and open page
 		const browser = await puppeteer.launch({headless:true});
 		const page = await browser.newPage();
-		
+
 		await page.goto(urlKupujem);
 		await page.click('button.ButtonAsLink_asLink__PxD0l:nth-child(1) > span:nth-child(1)')
-		await page.waitForSelector('div.Grid_col-lg-4__fPwt2:nth-child(1) > span:nth-child(2) > div:nth-child(2)')
-		await page.click('div.Grid_col-lg-4__fPwt2:nth-child(1) > span:nth-child(2) > div:nth-child(2)');
-		await page.waitForSelector('.css-1gxogjc-menu');
-		await page.type('#react-select-groupId-input', make);
-		
-		
+		await page.waitForSelector('#react-select-groupId-placeholder');
+		await page.type('#react-select-groupId-input',make);
 
-
-		console.log('getting to log data')
-
+		await page.waitForSelector('[id*=groupId-option]');
 		// catch and save the response data
 		const [response] = await Promise.all([
 			page.waitForResponse(async(response) => {
@@ -257,20 +221,31 @@ async function getModelKupujem(make)
 						response.headers()['content-type'] === 'application/json' &&
 						!response.url().includes('groups'))
 						{
-							data = await response.json()
+							let dataResponse = await response.json()
+							data = dataResponse.results;
 							return true;
 						}
 				}),
-				page.keyboard.press('Enter')
+				page.evaluate((make)=>{
+					const listOptions = document.querySelectorAll('[id*=groupId-option]');
+					var found = false;
+
+					listOptions.forEach(el=>{
+						if(!found && el.innerText === make){
+							el.click();
+							found = true;
+						}
+					})
+
+				},make)
+				
 			
 		])
-		console.log('before screen')
-		await page.screenshot({path:'./picture2.png',fullPage:true});
-		console.log('after screen')
-		console.log(data)
+
+		// await page.screenshot({path:'./imageSreenNew2.jpeg',fullPage:true})
 		await browser.close();		
 
-	} catch(e){};
+	} catch(e){console.log(e)};
 
 	return data;
 
@@ -285,239 +260,96 @@ async function getYearPolovni(make,model)
 		//start up the browser and set config
 		const browser = await puppeteer.launch({headless:true});
 		const page = await browser.newPage();
-		await page.setRequestInterception(true);
-		page.setDefaultNavigationTimeout(0);
-
-		data = page.waitForSelector('.sumo_year_to',{timeout:15000})
-		.then(
-				()=>{
-
-						return (async function(){
-							try{
-
-							const text = await page.evaluate((make,model)=>{
-								return (async function(){
-
-								if(document.readyState != 'interactive' && document.readyState != 'complete')	
-									{
-										var promiseDom = new Promise((resolve,reject)=>
-												{
-													document.addEventListener('DOMContentLoaded',resolve);
-												});	
-										await promiseDom;
-									}
-
-								var data;
-
-								var yearOptionsStart = document.getElementsByClassName('sumo_year_from')[0].querySelectorAll('.opt');
-								var yearStartArray = [];
-
-								for (let i=0;i<yearOptionsStart.length;i++)
-									{
-										yearStartArray.push(yearOptionsStart[i].innerText.replace('.','').replace(' ','').replace('god',''));
-									}
-
-
-								var yearOptionsEnd = document.getElementsByClassName('sumo_year_to')[0].querySelectorAll('.opt');
-								var yearEndArray = [];
-
-								for (let i=0;i<yearOptionsEnd.length;i++)
-									{
-										yearEndArray.push(yearOptionsEnd[i].innerText.replace('.','').replace(' ','').replace('god',''));
-									}
-
-
-
-								
-
-
-								data = {"yearStart":yearStartArray,"yearEnd":yearEndArray};
-
-								return data;
-								})(); 
-
-
-
-
-
-
-								},make,model)
-							await browser.close();
-							contentLoaded = true;
-							return text;
-
-							}catch(e){console.log(e)};
-
-
-
-
-
-
-
-
-						})();
-
-
-
-
+		await page.goto(urlPolovni,{waitUntil:'domcontentloaded'});
+		await page.waitForSelector('.sumo_year_to',{timeout:15000});
+		data = await page.evaluate(async(make,model)=>{
+			if(document.readyState != 'interactive' && document.readyState != 'complete')	
+				{
+					var promiseDom = new Promise((resolve,reject)=>
+							{
+								document.addEventListener('DOMContentLoaded',resolve);
+							});	
+					await promiseDom;
 				}
-			
-			).catch((e)=>{console.log(e,"expected error, ignore"); browser.close();return false})
+
+			var data;
+			var yearOptionsStart = document.getElementsByClassName('sumo_year_from')[0].querySelectorAll('.opt');
+			var yearStartArray = [];
+
+			for (let i=0;i<yearOptionsStart.length;i++)
+				{
+					yearStartArray.push(yearOptionsStart[i].innerText.replace('.','').replace(' ','').replace('god',''));
+				}
 
 
-		//intercept page requests
-		page.on('request',request => {
+			var yearOptionsEnd = document.getElementsByClassName('sumo_year_to')[0].querySelectorAll('.opt');
+			var yearEndArray = [];
 
-					if(!contentLoaded)
-						{
-							if(request.resourceType() === 'image' || 
-								  	request.resourceType() ==='imageset' ||
-								  	request.resourceType() ==='media'||
-								  	request.resourceType() === 'font'||
-								  	request.resourceType() === 'object'||
-								  	request.resourceType() === 'object_subrequest'||	
-								  	request.resourceType() === 'sub_frame'||
-								  	request.resourceType() === 'xmlhttprequest'
-								)
-									{
-										//cancel request
-										request.respond({
-											status:200,
-											body:"foo"
-										})	
-									}
-							else
-								{
-									request.continue();
-								}
+			for (let i=0;i<yearOptionsEnd.length;i++)
+				{
+					yearEndArray.push(yearOptionsEnd[i].innerText.replace('.','').replace(' ','').replace('god',''));
+				}
+			data = {"yearStart":yearStartArray,"yearEnd":yearEndArray};
 
-						}
-				})
+			return data;
 
-		await page.goto(urlPolovni);
+			},make,model);
+		
 
-	}catch(e){};
+	}catch(e){console.log(e)};
+	if (data != undefined){contentLoaded=true}
+	console.log(data)
 	return data;
 	}
 
 async function getYearKupujem(make,model)
 	{
 		var data;
+		var yearStart = [];
+		var yearEnd = [];
 
 		try {
 		//start up the browser and set config
 		const browser = await puppeteer.launch({headless:true});
 		const page = await browser.newPage();
-		await page.setRequestInterception(true);
 		page.setDefaultNavigationTimeout(0);
+		await page.goto(urlKupujem,{waitUntil:'domcontentloaded'});
+		await page.click('button.ButtonAsLink_asLink__PxD0l:nth-child(1) > span:nth-child(1)')
 
-		data = page.waitForSelector('#vehicleMakeYearSecondMinSelection',{timeout:15000}) 
-		.then(
-				()=>{
+		// get yearStart
+		await page.waitForSelector('#react-select-vehicleMakeYearMin-placeholder')
+		await page.click('#react-select-vehicleMakeYearMin-placeholder');
+		await page.waitForSelector('#react-select-vehicleMakeYearMin-option-0');
 
-						return (async function(){
-							try{
+		yearStart = await page.evaluate(()=>{
+			let yearStart = [];
+			const listOptions = document.querySelectorAll('[id*=select-vehicleMakeYearMin-option]');
 
-							const text = await page.evaluate((make,model)=>{
-								return (async function(){
+			listOptions.forEach(el=>{
+				var text = el.innerText.replace('.','');
+				yearStart.push(text);
+			})
+			return yearStart;
+		})
 
-								if(document.readyState != 'interactive' && document.readyState != 'complete')	
-									{
-										var promiseDom = new Promise((resolve,reject)=>
-												{
-													document.addEventListener('DOMContentLoaded',resolve);
-												});	
-										await promiseDom;
-									}
+		// get yearEnd
+		await page.click('#react-select-vehicleMakeYearMax-placeholder');
+		await page.waitForSelector('#react-select-vehicleMakeYearMax-option-0');
+		yearEnd = await page.evaluate(()=>{
+			let yearEnd = [];
+			const listOptions = document.querySelectorAll('[id*=select-vehicleMakeYearMax-option]');
 
+			listOptions.forEach(el=>{
+				var text = el.innerText.replace('.','');
+				yearEnd.push(text);
+			})
+			return yearEnd;
+		})
 
-									
-
-
-
-
-
-								var yearOptionsStart = document.getElementById('vehicleMakeYearSecondMinSelection').querySelectorAll('.uiMenuItem');
-								var yearOptionsEnd = document.getElementById('vehicleMakeYearSecondMaxSelection').querySelectorAll('.uiMenuItem');
-								var yearStartArray =[];
-								var yearEndArray = [];
-
-								for (let i=0;i<yearOptionsStart.length;i++)
-									{
-										yearStartArray.push(yearOptionsStart[i].innerText.replace('.',''))
-									}
-
-								for (let i=0;i<yearOptionsEnd.length;i++)
-									{
-										yearEndArray.push(yearOptionsEnd[i].innerText.replace('.',''))
-									}
-								
-								var data = {'yearStart':yearStartArray,'yearEnd':yearEndArray};
-
-								return data;
-								})(); 
-
-
-
-
-
-
-								},make,model)
-							await browser.close();
-							contentLoaded = true;
-							return text;
-
-							}catch(e){console.log(e)};
-
-
-
-
-
-
-
-
-						})();
-
-
-
-
-				}
-			
-			).catch((e)=>{console.log(e,"expected error, ignore"); browser.close();return false})
-
-
-		//intercept page requests
-		page.on('request',request => {
-
-					if(!contentLoaded)
-						{
-							if(request.resourceType() === 'image' || 
-								  	request.resourceType() ==='imageset' ||
-								  	request.resourceType() ==='media'||
-								  	request.resourceType() === 'font'||
-								  	request.resourceType() === 'object'||
-								  	request.resourceType() === 'object_subrequest'||	
-								  	request.resourceType() === 'sub_frame'||
-								  	request.resourceType() === 'xmlhttprequest'
-								)
-									{
-										//cancel request
-										request.respond({
-											status:200,
-											body:"foo"
-										})	
-									}
-							else
-								{
-									request.continue();
-								}
-
-						}
-				})
-
-		await page.goto(urlKupujem);
+	data = {'yearStart':yearStart,'yearEnd':yearEnd};
 
 	}catch(e){};
+
 	return data;
 	}
 
@@ -555,6 +387,7 @@ async function handlerFunction(dataToGet,arg1,arg2)
 							if(Object.keys(make).length >=1)
 								{
 									gotData = true;
+									
 								}
 						}
 						catch(e)
@@ -585,3 +418,6 @@ function convertToArray(keyName, object){
 	
 	return array;
 }
+
+
+

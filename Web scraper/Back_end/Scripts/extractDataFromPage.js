@@ -1,296 +1,177 @@
 import puppeteer from 'puppeteer';
+import * as cheerio from 'cheerio';
+
+
+
 
 export async function extractDataFromPage (URL,choice) 
 	{
-		console.log('URL sent for extraction',URL)
+
 		var contentLoaded = false;
 		var data;
-
-		try
-			{
-				//start up the browser and set config
+		const urlNEW = URL.replace('novi','www');
+		
 
 				const browser = await puppeteer.launch({headless:true});
 				const page = await browser.newPage();
-				await page.setRequestInterception(true);
-				page.setDefaultNavigationTimeout(0);
 
-
-				if (choice === "kupujem")
-					{
-						data = page.waitForSelector('.adName',{timeout: 15000})
-						.then(()=>
-						{
-							return (async function()		
-							{
-								try
-								{
-									console.log('entered evaluate')
-									const text = await page.evaluate(()=>
-									{
-										return (async function() 
-										{
-									
-											console.log("waiting for DOM")
-											var promiseDom = new Promise((resolve,reject)=>
-												{
-													document.addEventListener('DOMContentLoaded',resolve);
-												});
-											function delaySecond(num){
-												return new Promise ((resolve,reject)=>
-														{
-															setTimeout(resolve,num);
-														});	
-												}
-
-											await Promise.race([
-												promiseDom,
-												delaySecond(10000)
-												]);
-
-
-											
-
-
-											console.log('finnished waiting for DOM');
-
-												var array = [];
-												var listOfNames = document.getElementsByClassName("adName");
-
-												for (i=0;i<listOfNames.length;i++)
-													{
-															var parent = listOfNames[i].parentElement.parentElement.parentElement.parentElement;
-															var name = parent.querySelector(".adName").innerText;
-
-
-															var price = parent.querySelector(".adPrice").innerText;
-
-															if (
-																!price.includes("Dogovor") &&
-																!price.includes("Kontakt") &&
-																!price.includes("Pozvati") &&
-																!price.includes("Kupujem")
-																)
-															{
-																price = price
-																.replaceAll(".","")
-																.replaceAll("€","")
-																.replaceAll(" ","")
-																.replaceAll(",","");
-
-																if(!price.includes("din"))
-																	{
-																		price = price.slice(0,-2);
-																	}
-															}
-
-															var href =  parent.querySelector(".adName").href;
-
-															
-															var description = parent.querySelector(".adDescription").innerText;
-															description = description.split(',');
-
-															var year = description[0];
-															var fuel =  description[3].split('.')[0];
-															var cc =  description[2].replaceAll("cm3","");
-															var km =  description[1].replaceAll("km","").replaceAll(".",",");
-
-															// the 3 lines below that are commented out are used when extracting to spreadsheet
-															//name = `\"${name}\"`;
-															//href = `\"${href}\"`;
-
-															var adObj = {
-																//"Car Name":`=HYPERLINK(${href},${name})`,  --for href
-																"Car Name": name,
-																"Car Price": price,
-																"Car Year":year,
-																"Car Fuel":fuel,
-																"Car KM":km,
-																"Car CC":cc,
-																"href":href,
-																}
-
-															array.push(adObj);
-												} 
-
-												return array;
-											})();
-
-												
-												
-										});
-									console.log('exited evaluate')
-									await browser.close();
-									contentLoaded = true;
-									return text;
-											
-								}
-								catch(e){console.log(e)};
-
-							})();
-						})
-						.catch((e)=>{console.log(e+ "expected error, ignore"); browser.close();return false;})
-					} 
-				else if (choice === "polovni")
-
-						{
-							data = page.waitForSelector('.info',{timeout: 15000})
-								.then(()=>
-									{
-										return (async function()
-											{
-												try
-													{
-														
-														const text = await page.evaluate(()=>{
-														
-
-															return (async function() {
-																
-
-
-
-																var promiseDom = new Promise((resolve,reject)=>
-																{
-																	document.addEventListener('DOMContentLoaded',resolve);
-																});
-																
-																function delaySecond(num){
-																	return new Promise ((resolve,reject)=>
-																			{
-																				setTimeout(resolve,num);
-																			});	
-																	}
-																	console.log('waiting for DOM')
-																await Promise.race([
-																	promiseDom,
-																	delaySecond(10000)
-																	]);
-																		console.log('waiting for DOM ____ENDED____');
-
-																	var array = []
-																	var listOfNames = document.getElementsByClassName("textContentHolder");
-
-																	console.log("entered the FOR function")
-																	for (i=0;i<listOfNames.length;i++)
-																	{
-																		var parent = listOfNames[i].parentElement;
-
-																		var name = parent.querySelector(".ga-title").innerText;
-																		var priceDiscount = parent.querySelector(".price").querySelector(".priceDiscount");
-																		var price = parent.querySelector(".price").innerText;
-
-																		if(priceDiscount != null)
-																			{
-																				price = priceDiscount.innerText;
-																			}
-
-																		if(price.includes("+"))
-																			{	
-																				var b;
-																				b = price.split("+");
-																				price = b[0];
-																			}
-																		else if(price.includes("\n"))
-																			{
-																				var b;
-																				b = price.split("\n");
-																				price = b[0];
-																			};
-
-																		if (
-																			!price.includes("Dogovor") &&
-																			!price.includes("Kontakt") &&
-																			!price.includes("Pozvati")
-																			)
-																		{
-																			price = price
-																			.replaceAll(".","")
-																			.replaceAll("€","")
-																			.replaceAll(" ","")
-																			.replaceAll(",","")
-																			.replaceAll(" ","")
-																			.replaceAll("\n","")
-																		}
-																		
-
-																		var href = parent.querySelector(".ga-title").href;
-																		var description = parent.querySelector(".info");
-
-																		var year = description.children[0].innerText.split('\n')[0].split('.')[0];
-																		var fuel = description.children[0].innerText.split('\n')[1].split("|")[0];
-																		var cc =  description.children[0].innerText.split('\n')[1].split("|")[1].replaceAll("cm3","");
-																		var km =  description.children[1].innerText.split("\n")[0].replaceAll(".",",").replaceAll("km","");
-
-																		// the 3 lines below that are commented out are used when extracting to spreadsheet
-																		//name = `\"${name}\"`;     for hyperlink
-																		//href = `\"${href}\"`;		for hyperlink
-
-																		var adObj = {
-																			//"Car Name":`=HYPERLINK(${href},${name})`, //hyperlink used for spreadsheet
-																			"Car Name": name,
-																			"Car Price": price,
-																			"Car Year":year,
-																			"Car Fuel":fuel,
-																			"Car KM":km,
-																			"Car CC":cc,
-																			"href":href,
-																			}
-
-																		array.push(adObj);
-
-																}
-																return array;
-															})();
-
-
-
-
-														});
-													await browser.close();
-													contentLoaded = true;
-													return text;
-													}
-												catch(e){console.log(e)}
-											}
-										)();
-									})
-								.catch((e)=>{console.log(e+ "expected error, ignore"); browser.close();return false;})
-						}
+		try
+			{
 				
+				if(choice === 'kupujem')
+					{
+						page.setRequestInterception(true);
 
-				//intercept page requests
-				page.on('request',request => {
+						page.on('request', async (req) => {
+							if (req.url().includes('pretraga')){
 
-					if(!contentLoaded)
-						{
-							if(request.resourceType() === 'image' || 
-								  	request.resourceType() ==='imageset' ||
-								  	request.resourceType() ==='media'||
-								  	request.resourceType() === 'font'||
-								  	request.resourceType() === 'object'||
-								  	request.resourceType() === 'object_subrequest'||	
-								  	request.resourceType() === 'sub_frame'||
-								  	request.resourceType() === 'xmlhttprequest'
-								)
-									{
-										//cancel request
-										request.respond({
-											status:200,
-											body:"foo"
-										})	
-									}
-							else
-								{
-									request.continue();
-								}
+								page.on('response',async (res)=>{	
 
-						}
-				})
 
-				await page.goto(URL,{timeout: 15000});
+									const arrayOptions = [];
+
+									// load html with cheerio
+									const dataHtml = await res.text();
+									const $ = cheerio.load(dataHtml);
+									
+									//gather data
+									const adList = $('[id*="adDescription"]');
+									$(adList).each((i,e)=>{
+										const nameRaw = $(e).find('a[class="adName"]').text().trim();
+										const descriptionRaw = $(e).find('div[class*="adDescription"]').text().trim();
+										const priceRaw = $(e).find('span[class*="adPrice"]').text().trim();
+										const linkRaw = $(e).find('[class="adName"]').attr('href').trim();
+
+										const name = nameRaw.trim();
+										const descriptionArray = descriptionRaw.split(',');
+										const FuelAndDescArray = descriptionArray[3].split('.');
+										const year = descriptionArray[0].match('[0-9]+')[0]
+										const km = descriptionArray[1].trim().replaceAll('.','').replace(' km','');
+										const cc = descriptionArray[2].trim().replace(' cm3','');
+										const fuel = FuelAndDescArray[0].trim();
+										
+										FuelAndDescArray.shift();
+										// const descriptionBefore = FuelAndDescArray.join('').trim()
+										// const description = FuelAndDescArray.join(' ').trim();
+										const price = priceRaw.split(',')[0].trim().replace('.','');
+										if(priceRaw.includes('din')){
+											price.concat(' din');
+											
+										}
+										
+										const link = `https://novi.kupujemprodajem.com${linkRaw}`;
+										const carObject = {'Car Name':name,'Car Year':year,'Car Price':price,'Car Fuel':fuel,'Car CC':cc,'Car KM':km,'href':link}
+										arrayOptions.push(carObject);
+									})
+									
+									data = arrayOptions;
+									await browser.close()
+								})
+
+								req.continue();									
+							}
+						});
+						
+						await page.goto(urlNEW);
+						
+						
+					}
+				else if (choice === 'polovni')
+					{
+
+						page.setRequestInterception(true);
+
+						page.on('request', async (req) => {
+							if (req.url().includes('pretraga')){
+
+								page.on('response',async (res)=>{	
+
+									const arrayOptions = [];
+
+									// load html with cheerio 
+									const dataHtml = await res.text();
+									const $ = cheerio.load(dataHtml);
+									
+									//gather data
+									const featuredCarsList = [];
+									const ordinaryCarsList = [];
+
+									try {
+										const featuredList = $('section[class*="classified"]');
+										$(featuredList).each((i,e)=>{
+
+										})
+										
+									} catch(e){}
+
+									const ordinaryList = $('article[class*="classified"]');
+									
+									$(ordinaryList).each((i,e)=>{
+
+										//if element is hidden, don't load it
+										var hidden = false;
+										try {
+											var element = $(e).find('div[class="textContentHolder"]').length;
+											if (element === 0){
+												hidden = true;
+											}
+										} catch (e){}
+										if(hidden){return};
+
+
+										var priceDiscount;
+										var priceRaw;
+										const nameRaw = $(e).find('a[class="ga-title"]').text().trim();
+										const linkRaw = $(e).find('a[class="ga-title"]').attr('href').trim();
+									
+										try {
+											var x = $(e).find('span[class*="discount"i]');
+											if(x.length>0){
+												priceDiscount = x.text().trim().replaceAll('.','').replace(' €','');
+											}
+										} catch (e){}
+										if(priceDiscount === undefined){
+											priceRaw = $(e).find('div[class*="price"]').text().trim().replaceAll('.','').replace(' €','');
+										}
+										const descriptionRaw1 = $(e).find('div[class*="setInfo"]')[0]; 
+										const descriptionRaw2 = $(e).find('div[class*="setInfo"]')[1]; 
+										const year = $(descriptionRaw1).find('div[class="top"]').text().match(/\d+/g)[0];
+										const fuel = $(descriptionRaw1).find('div[class="bottom"]').text().split('|')[0].trim();
+										var cc;
+
+										try {
+											var includesDigits = $(descriptionRaw1).find('div[class="bottom"]').text().match(/\d+/g)
+											if(includesDigits === null){
+												cc = $(descriptionRaw1).find('div[class="bottom"]').text().trim();
+											}
+										} catch (e){}
+										if (cc === undefined){
+											cc = $(descriptionRaw1).find('div[class="bottom"]').text().match(/\d+/g)[0];
+										}
+										const name = nameRaw;
+										const km = $(descriptionRaw2).find('div[class="top"]').text().replace(' km','').replaceAll('.','');
+									
+										const link = `https://www.polovniautomobili.com${linkRaw}`;
+										const carObject = {'Car Name':name,'Car Year':year,'Car Price': priceDiscount === undefined ? priceRaw : priceDiscount ,'Car Fuel':fuel,'Car CC':cc,'Car KM':km,'href':link}
+										arrayOptions.push(carObject);
+									})
+
+
+									
+									
+									data = arrayOptions;
+									await browser.close()
+								})
+
+								req.continue();									
+							}
+						});
+						
+						await page.goto(URL);
+					}
+				
 			}
-		catch(e){console.log(e,'outside error')}
+		catch(e){console.log(e,'outside error'), await browser.close()}
 
 		return data;
 
