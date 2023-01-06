@@ -18,13 +18,15 @@ window.onload = ()=>
 var requestSent = false;
 
 
-var website1;
-var website2;
+var website1Name;
+var website2Name;
 var websiteChoiceCount = 1;
 var websiteCounter = 1;
 
 var w1Make = getElement('#make1');
+var w1MakeId;
 var w1Model = getElement('#model1');
+var w1ModelId;
 var w1YearStart = getElement('#yearStart1');
 var w1YearEnd = getElement('#yearEnd1');
 
@@ -34,7 +36,9 @@ var w1YearStartList;
 var w1YearEndList;
 
 var w2Make;
+var w2MakeId;
 var w2Model;
+var w2ModelId;
 var w2YearStart;
 var w2YearEnd;
 
@@ -72,6 +76,9 @@ var modelConfirmed = false;
 var yearStartConfirmed = false;
 var yearEndConfirmed = false;
 
+
+
+
 choiceSelect1.addEventListener('change',()=>{
 	selectionHandler(choiceSelect1,'disable'); 
 	selectionHandler(choiceSelect2,'enable');
@@ -96,7 +103,10 @@ var modelHandled = false;
 var yearHandled = false;
 
 var finalStoredData;
-
+var w1MakeArray = [];
+var w1ModelArray = [];
+var w2MakeArray = [];
+var w2ModelArray = [];
 
 
 export function getMake()
@@ -107,17 +117,17 @@ export function getMake()
 		var arrayOfWebsites;
 		if (websiteChoiceCount===2)
 			{
-				arrayOfWebsites = {1:website1 ,2:website2};
+				arrayOfWebsites = {1:website1Name ,2:website2Name};
 			}
 		else
 			{
-				if (website1 != "")
+				if (website1Name != "")
 					{
-						arrayOfWebsites = {1:website1};
+						arrayOfWebsites = {1:website1Name};
 					}
 				else 
 					{
-						arrayOfWebsites = {1:website2};
+						arrayOfWebsites = {1:website2Name};
 					}
 			}
 
@@ -130,22 +140,22 @@ export function getMake()
 				loadEnd();
 				makeOptions = JSON.parse(xhr.responseText);
 				console.log('got data', makeOptions);
-				var w1OptionsArray = makeOptions['web1'];
+				w1MakeArray = makeOptions['web1'];
 
-				w1OptionsArray.forEach(val => {
+				w1MakeArray.forEach(val => {
 					var el = createEl("option");
-					el.value = val;
-
+					el.value = val.name;
+					
 					w1MakeList.append(el);
 				});
 
 				if(websiteChoiceCount===2)
 					{
-						var w2OptionsArray = makeOptions['web2'];
-						w2OptionsArray.forEach(val => {
+						w2MakeArray = makeOptions['web2'];
+						w2MakeArray.forEach(val => {
 							var el = createEl("option");
-							el.value = val;
-
+							el.value = val.name;
+							
 							w2MakeList.append(el);
 						});
 					}
@@ -168,7 +178,7 @@ export function getModel()
 			}
 		else
 			{
-				if (website1 != "")
+				if (website1Name != "")
 					{
 						arrayOfMake = [w1Make.value]
 					}
@@ -188,23 +198,23 @@ export function getModel()
 			{
 				loadEnd();
 				modelOptions = JSON.parse(xhr.responseText);
-
-				var w1OptionsArray = modelOptions['web1'];
-				console.log(modelOptions);
-				console.log(website1)
-					w1OptionsArray.forEach(val => {
+	
+					w1ModelArray = modelOptions['web1'];
+					w1ModelArray.forEach(val => {
 						var el = createEl("option");
-						el.value = val;
+						el.value = val.name;
+						
 
 						w1ModelList.append(el);
 					})
 
 				if(websiteChoiceCount===2)
 					{
-						var w2OptionsArray = modelOptions['web2'];
-						w2OptionsArray.forEach(val => {
+						w2ModelArray = modelOptions['web2'];
+						w2ModelArray.forEach(val => {
 							var el = createEl("option");
-							el.value = val;
+							el.value = val.name;
+							
 
 							w2ModelList.append(el);
 						})
@@ -263,13 +273,15 @@ export function getFinalOptions()
 		//this function takes the input options and sends them to server
 		// upon returning it takes the data and creates tables
 
+		checkAndSetChoices();
+
 		loadStart();
 		
 		var dataToGet = {};
-		dataToGet['web1'] = {'make':w1Make.value,'model':w1Model.value,'yearStart':w1YearStart.value,'yearEnd':w1YearEnd.value};
+		dataToGet['web1'] = {'make':{'name':w1Make.value, 'id':w1MakeId},'model':{'name':w1Model.value, 'id':w1ModelId},'yearStart':w1YearStart.value,'yearEnd':w1YearEnd.value};
 		if (websiteChoiceCount ===2)
 			{
-				dataToGet['web2'] = {'make':w2Make.value,'model':w2Model.value,'yearStart':w2YearStart.value,'yearEnd':w2YearEnd.value};
+				dataToGet['web2'] = {'make':{'name':w2Make.value,'id':w2MakeId},'model':{'name':w2Model.value, 'id':w2ModelId},'yearStart':w2YearStart.value,'yearEnd':w2YearEnd.value};
 			}
 
 		var xhr = new XMLHttpRequest();
@@ -321,7 +333,7 @@ export function getFinalOptions()
 					{
 						if(dataSorted['web1'] === 'no data')
 							{	
-								alert(`There is no data for ${w1Make.value}/${w1Model.value}/${w1YearStart.value}-${w1YearEnd.value} on ${website1}`)
+								alert(`There is no data for ${w1Make.value}/${w1Model.value}/${w1YearStart.value}-${w1YearEnd.value} on ${website1Name}`)
 								location.reload();
 							}
 					}
@@ -354,7 +366,7 @@ function checkInput(value, array)
 
 			if(!matchFound)
 				{
-					if(value===x)
+					if(value===x.name || value === x)
 					{
 						matchFound = true;
 					}
@@ -396,13 +408,13 @@ function displayData(arg)
 				else if(arg['web1'] === 'no data')
 					{
 						createTableBig(arg['web2']);
-						alert(`There is no data for ${w1Make.value}/${w1Model.value}/${w1YearStart.value}-${w1YearEnd.value} on ${website1} website`);
+						alert(`There is no data for ${w1Make.value}/${w1Model.value}/${w1YearStart.value}-${w1YearEnd.value} on ${website1Name} website`);
 
 					}
 				else
 					{
 						createTableBig(arg['web1']);
-						alert(`There is no data for ${w2Make.value}/${w2Model.value}/${w2YearStart.value}-${w2YearEnd.value} on ${website2} website`);
+						alert(`There is no data for ${w2Make.value}/${w2Model.value}/${w2YearStart.value}-${w2YearEnd.value} on ${website2Name} website`);
 					}
 				
 			}
@@ -605,27 +617,27 @@ function loadEnd()
 
 function handleWebsiteChoice()
 	{
-		website1 = choiceSelect1.value;
-		website2 = choiceSelect2.value;
+		website1Name = choiceSelect1.value;
+		website2Name = choiceSelect2.value;
 		
-		if (website1 === "" && website2 === "")
+		if (website1Name === "" && website2Name === "")
 			{
 				return;
 			}
 
-		if (website1 != "" && website2 != "")
+		if (website1Name != "" && website2Name != "")
 			{
-				handleInputCreation([website1,website2]);
+				handleInputCreation([website1Name,website2Name]);
 				websiteChoiceCount = 2;
 			}
-		else if(website1 != "")
+		else if(website1Name != "")
 			{
-				handleInputCreation([website1]);
+				handleInputCreation([website1Name]);
 				websiteChoiceCount = 1
 			}
-		else if(website2 != "")
+		else if(website2Name != "")
 			{
-				handleInputCreation([website2]);
+				handleInputCreation([website2Name]);
 				websiteChoiceCount = 1
 			}
 		choiceSection.remove();
@@ -1043,4 +1055,30 @@ function toggleButtonOrder(button)
 
 	}
 
-//
+function checkAndSetChoices(){
+	
+	console.log('data',w1ModelArray);
+	w1MakeId = returnId(w1Make.value,w1MakeArray);
+	w1ModelId = returnId(w1Model.value, w1ModelArray);
+	
+	if(websiteChoiceCount>1){
+		w2MakeId = returnId(w2Make.value,w2MakeArray);
+		w2ModelId = returnId(w2Model.value,w2ModelArray)
+	}
+
+}
+
+function returnId(value,array){
+	var found = false;
+	var result;
+	array.filter((el)=>{
+		if(found){return;}
+		
+		if (value === el.name){
+			found= true;
+			result = el.id;
+		}
+	})
+	console.log(result)
+	return result;
+}
