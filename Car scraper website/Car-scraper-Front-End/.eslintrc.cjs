@@ -16,7 +16,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: './tsconfig.json',
+    project: './car-scraper-front-end/tsconfig.json',
   },
   plugins: ['react', '@typescript-eslint', 'prettier'],
   rules: {
@@ -27,5 +27,6 @@ module.exports = {
         endOfLine: 'auto',
       },
     ],
+    '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
   },
 };
