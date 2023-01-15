@@ -1,16 +1,18 @@
-export default function CarItemsTable() {
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        fetch('http://localhost:3000/').then((x) => {
-          x.json().then((result) => {
-            console.log(result);
-          });
-        });
-      }}
-    >
-      CLICK TO SEND REQUEST
-    </button>
+import LoadingData from '../components/loadingData';
+import CarItemCard from '../components/CarItemCard';
+
+export default function CarItemsTable({
+  list,
+}: {
+  list: Array<string> | undefined;
+}) {
+  // if data is undefined, we set a loading screen, or nothing.
+
+  return list === undefined ? (
+    <LoadingData />
+  ) : (
+    list.forEach((element) => {
+      return <CarItemCard data={element} />;
+    })
   );
 }

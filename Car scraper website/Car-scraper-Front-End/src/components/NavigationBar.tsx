@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import ButtonTest from './ButtonTest';
 import LoginButton from '../containers/LoginButton';
 import RegisterAccButton from '../containers/RegisterAccButton';
@@ -9,11 +10,25 @@ export default function NavigationBar() {
   // JUST LEAVE ROOM FOR IT
 
   return (
-    <div className="w-full flex-row">
-      <ButtonTest name="Home" />
-      <ButtonTest name="About" />
-      <LoginButton />
-      <RegisterAccButton />
-    </div>
+    <nav className="w-full flex-row">
+      <Link to="/">
+        <ButtonTest name="Home" />
+      </Link>
+      <Link to="/UserAccount">
+        <ButtonTest name="User Account" />
+      </Link>
+      <Link to="/Register">
+        <ButtonTest name="Register" />
+      </Link>
+      <Link to="/Login">
+        <ButtonTest name="Login" />
+      </Link>
+      <Link to="/About">
+        <ButtonTest name="Anout" />
+      </Link>
+
+      {/* <LoginButton />
+      <RegisterAccButton /> */}
+    </nav>
   );
 }

@@ -1,5 +1,3 @@
-export default function Content() {
-  return (
-   // x
-  );
+export default function SiteContent({ list }: { list: string }) {
+  return <div>{list}</div>;
 }

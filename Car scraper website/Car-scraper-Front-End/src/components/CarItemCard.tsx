@@ -1,4 +1,4 @@
-export default function CarItemCard() {
+export default function CarItemCard({ data }: { data: string }) {
   return (
     <button
       type="button"
