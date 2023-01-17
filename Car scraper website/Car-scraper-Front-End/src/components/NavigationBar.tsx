@@ -1,34 +1,67 @@
-import { Link } from 'react-router-dom';
-import ButtonTest from './ButtonTest';
-import LoginButton from '../containers/LoginButton';
-import RegisterAccButton from '../containers/RegisterAccButton';
+import { useState } from 'react';
+import ButtonLink from './ButtonLink';
 
 export default function NavigationBar() {
-  // Nav bar will contain a search bar as well
-  // This search bar will look trough the awailable website data only.
-  // MAYBE IMPLEMENT THIS..BUT AFTER IMPLEMENTING EVERYTHING ELSE..
-  // JUST LEAVE ROOM FOR IT
+  const [toggle, setToggle] = useState(true);
+  const [overlay, setOverlay] = useState(false);
 
   return (
-    <nav className="w-full flex-row">
-      <Link to="/">
-        <ButtonTest name="Home" />
-      </Link>
-      <Link to="/UserAccount">
-        <ButtonTest name="User Account" />
-      </Link>
-      <Link to="/Register">
-        <ButtonTest name="Register" />
-      </Link>
-      <Link to="/Login">
-        <ButtonTest name="Login" />
-      </Link>
-      <Link to="/About">
-        <ButtonTest name="Anout" />
-      </Link>
+    <nav className=" fixed top-0 flex h-14 w-full flex-col justify-between bg-white pl-2 pr-2 sm:flex-row ">
+      <div className="flex h-full w-full flex-row items-center sm:hidden ">
+        <div className="w-1/6">
+          <div
+            className="fixed top-0 left-0  h-full w-full bg-black opacity-50"
+            style={{ display: !overlay ? 'none' : '' }}
+            onClick={handleClick}
+            onKeyDown={handleClick}
+            role="none"
+          />
+          <button
+            type="button"
+            className="rounded-lg py-1 px-2 text-slate-900  opacity-70  duration-500 ease-in-out hover:bg-slate-500 hover:text-slate-100"
+            onClick={handleDropdown}
+          >
+            X
+          </button>
+        </div>
 
-      {/* <LoginButton />
-      <RegisterAccButton /> */}
+        <div className=" flex w-5/6 justify-center ">CAR SCRAPER </div>
+      </div>
+
+      <div
+        className="fixed top-14 left-0 rounded-md bg-white sm:top-0 sm:!flex sm:w-full sm:justify-between sm:rounded-none"
+        style={{ display: toggle ? 'none' : '' }}
+      >
+        <div className=" flex flex-col justify-between sm:flex-row">
+          <div>
+            <ButtonLink link="/" name="Home" handleLink={handleClick} />
+          </div>
+          <div>
+            <ButtonLink link="/About" name="About" handleLink={handleClick} />
+          </div>
+        </div>
+        <div className=" hidden sm:flex sm:self-center">CAR SCRAPER</div>
+        <div className=" flex flex-col justify-between sm:flex-row">
+          <div>
+            <ButtonLink
+              link="/Register"
+              name="Register"
+              handleLink={handleClick}
+            />
+          </div>
+
+          <div>
+            <ButtonLink link="/Login" name="Login" handleLink={handleClick} />
+          </div>
+        </div>
+      </div>
     </nav>
   );
+  function handleDropdown() {
+    setToggle((x) => !x);
+    setOverlay((x) => !x);
+  }
+  function handleClick() {
+    handleDropdown();
+  }
 }

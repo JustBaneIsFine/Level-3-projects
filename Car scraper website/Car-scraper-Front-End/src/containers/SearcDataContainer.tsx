@@ -6,6 +6,15 @@ export default function SearchDataContainer() {
     <>
       <Header />
       <Content />
+      <Content />
+      <Content />
+      <Content />
+      <Content />
+      <Content />
+      <Content />
+      <Content />
+      <Content />
+      <Content />
     </>
   );
 }

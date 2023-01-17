@@ -1,4 +1,23 @@
-#root {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  body {
+    @apply bg-gradient-to-b from-slate-900 to-slate-800 pt-14 text-black;
+    background-attachment: fixed;
+  }
+}
+
+/* body {
+  background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+  --tw-gradient-from: #0f172a;
+  --tw-gradient-to: #27303d;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  background-attachment: fixed;
+  color: whitesmoke;
+} */
+/* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -38,4 +57,4 @@
 
 .read-the-docs {
   color: #888;
-}
+} */

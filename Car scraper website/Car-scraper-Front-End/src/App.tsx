@@ -7,6 +7,7 @@ import UserAccount from './pages/UserAccount';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import About from './pages/About';
+import Create from './pages/Create';
 
 // Components
 import NavigationBar from './components/NavigationBar';
@@ -21,7 +22,7 @@ import { DisplayContextProvider } from './context/ItemDisplayContext';
 
 function App() {
   return (
-    <div className="App container">
+    <div className="App">
       <BrowserRouter>
         <UserContextProvider>
           <NavigationBar />
@@ -34,7 +35,7 @@ function App() {
             <Route path="/Register" element={<Register x="Register Page" />} />
             <Route path="/Login" element={<Login x="Login Page" />} />
             <Route path="/About" element={<About x="About Page" />} />
-            {/* <Route path="/Create" element={<User />} /> */}
+            {/* <Route path="/Create" element={<Create />} /> */}
           </Routes>
         </UserContextProvider>
         <Footer />
