@@ -1,3 +1,5 @@
+import RegisterForm from '../containers/RegisterForm';
+
 export default function Register({ x }: { x: string }) {
-  return <div>{x}</div>;
+  return <RegisterForm />;
 }

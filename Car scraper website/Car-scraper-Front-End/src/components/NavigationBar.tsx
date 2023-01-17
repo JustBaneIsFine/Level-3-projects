@@ -51,7 +51,7 @@ export default function NavigationBar() {
           </div>
 
           <div>
-            <ButtonLink link="/Login" name="Login" handleLink={handleClick} />
+            <ButtonLink link="/Login" name="Log in" handleLink={handleClick} />
           </div>
         </div>
       </div>
