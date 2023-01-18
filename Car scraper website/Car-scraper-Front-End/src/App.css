@@ -4,7 +4,7 @@
 
 @layer components {
   body {
-    @apply bg-gradient-to-b from-slate-900 to-slate-800 pt-14 text-black;
+    @apply bg-gradient-to-b  from-slate-100 to-slate-400 pt-14 text-black dark:from-gray-700 dark:to-slate-900 dark:text-white;
     background-attachment: fixed;
   }
 }

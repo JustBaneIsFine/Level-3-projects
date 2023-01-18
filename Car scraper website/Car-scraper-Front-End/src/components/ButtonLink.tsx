@@ -22,7 +22,7 @@ export default function ButtonLink({
         handleLink();
       }}
       to={link}
-      className=" m-2 flex justify-center rounded-lg  pl-5 pr-5 pt-2 pb-2 text-slate-900 opacity-70  duration-500  ease-in-out hover:bg-slate-500 hover:text-slate-100"
+      className=" m-2 flex justify-center rounded-lg  pl-5 pr-5 pt-2 pb-2 text-slate-900 opacity-70  duration-500 ease-in-out  hover:bg-slate-500  hover:text-slate-100 dark:text-white dark:hover:bg-slate-200 dark:hover:text-black"
     >
       {name}
     </Link>
