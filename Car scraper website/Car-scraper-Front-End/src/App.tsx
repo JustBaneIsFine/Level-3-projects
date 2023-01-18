@@ -22,7 +22,7 @@ import { DisplayContextProvider } from './context/ItemDisplayContext';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App min-h-screen">
       <BrowserRouter>
         <UserContextProvider>
           <NavigationBar />
