@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="">
             <IconsHolder iconSize="h-8 sm:h-10" />
           </div>
-          <div className="">@JustBaneIsFine</div>
+          <div className="text-sm">@JustBaneIsFine</div>
           <div className="cursor-pointer text-sm">
             <ul className="grid gap-y-2">
               <li>

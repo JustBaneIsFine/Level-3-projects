@@ -6,7 +6,7 @@ export default function NavigationBar() {
   const [overlay, setOverlay] = useState(false);
 
   return (
-    <nav className=" fixed top-0 flex h-14 w-full flex-col justify-between  border-b bg-white bg-opacity-40 pl-2 pr-2 shadow-xl dark:bg-black dark:bg-opacity-70 sm:flex-row">
+    <nav className=" fixed top-0 z-50 flex h-14 w-full flex-col justify-between  border-b bg-white bg-opacity-40 pl-2 pr-2 shadow-xl dark:bg-black dark:bg-opacity-70 sm:flex-row">
       <div className="flex h-full w-full flex-row items-center sm:hidden ">
         <div className="w-1/6">
           <div
