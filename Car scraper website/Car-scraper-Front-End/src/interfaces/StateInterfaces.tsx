@@ -31,3 +31,13 @@ export interface DisplayContextType {
     React.SetStateAction<'list' | 'card' | 'search'>
   >;
 }
+
+export interface ButtonStateInterface {
+  displayType: 'Card' | 'Search' | 'List';
+  sortType: 'Price' | 'Year' | 'KM' | 'CC';
+  sortOrder: 'Asc' | 'Desc';
+}
+
+export interface ButtonStates {
+  types: 'Card' | 'List' | 'Search' | 'Price' | 'Year' | 'KM' | 'CC';
+}
