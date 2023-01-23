@@ -4,31 +4,47 @@ import {
   ButtonStateInterface,
   ButtonStates,
 } from '../interfaces/StateInterfaces';
-import CarItemsCards from './CarItemsCards';
-import CarItemsTable from './CarItemsTable';
-import SiteContent from './SiteContent';
+
+import ReturnDisplayComponent from './returnDisplayComp';
 import asc from '../assets/icons/asc.png';
 import desc from '../assets/icons/desc.png';
 import whiteasc from '../assets/icons/white asc.png';
 import whitedesc from '../assets/icons/white desc.png';
+import mockedData from '../assets/mockdata.json';
+import { CarInterface } from '../interfaces/carInterface';
+import sortCars from '../ts/sorting';
 
 export default function Content() {
   const [ButtonState, setButtonState] = useState<ButtonStateInterface>(
     {} as ButtonStateInterface
   );
+  const [sortedList, setSortedList] = useState<Array<CarInterface>>([]);
 
   // Implement dark mode
-  const darkMode = '';
-  const data = '2';
+
   useEffect(() => {
     setButtonState({
       displayType: 'Card',
-      sortType: 'Price',
+      sortType: 'CarPrice',
       sortOrder: 'Asc',
     });
   }, []);
 
-  useEffect(() => {}, [ButtonState]);
+  useEffect(() => {
+    const data = sortCars(
+      mockedData,
+      'number',
+      ButtonState.sortOrder,
+      ButtonState.sortType
+    );
+    console.log(ButtonState.sortOrder, data);
+    setSortedList(data);
+  }, [ButtonState, setSortedList]);
+
+  useEffect(() => {
+    console.log('changed');
+  }, [sortedList]);
+
   const pressedStyle =
     'translate-y-0.5 dark:shadow-black shadow-inner shadow-slate-700 dark:active:text-black';
 
@@ -36,7 +52,7 @@ export default function Content() {
     <>
       <div className="h-auto w-full ">
         <div className="w-full border border-black border-opacity-20" />
-        <div className=" flex justify-between bg-gradient-to-b from-slate-400 to-slate-800 p-2 ">
+        <div className=" flex justify-between bg-gradient-to-b p-2 dark:from-slate-600 dark:to-slate-800 ">
           <div className="flex flex-col text-center">
             <p>Display style</p>
 
@@ -61,49 +77,40 @@ export default function Content() {
             <p>Sort style</p>
             <ul className=" mt-2 flex  divide-x divide-gray-400  rounded-lg  text-center shadow dark:divide-gray-400 ">
               {returnButtonTab(
-                'Price',
-                ButtonState.sortType === 'Price' ? 'mr-5' : 'hidden',
+                'CarPrice',
+                ButtonState.sortType === 'CarPrice' ? 'mr-5' : 'hidden',
                 `rounded-l-lg ${
-                  ButtonState.sortType === 'Price' ? pressedStyle : ''
+                  ButtonState.sortType === 'CarPrice' ? pressedStyle : ''
                 }`
               )}
               {returnButtonTab(
-                'Year',
-                ButtonState.sortType === 'Year' ? 'mr-5' : 'hidden',
-                `${ButtonState.sortType === 'Year' ? pressedStyle : ''}`
+                'CarYear',
+                ButtonState.sortType === 'CarYear' ? 'mr-5' : 'hidden',
+                `${ButtonState.sortType === 'CarYear' ? pressedStyle : ''}`
               )}
               {returnButtonTab(
-                'KM',
-                ButtonState.sortType === 'KM' ? 'mr-5' : 'hidden',
-                `${ButtonState.sortType === 'KM' ? pressedStyle : ''}`
+                'CarKM',
+                ButtonState.sortType === 'CarKM' ? 'mr-5' : 'hidden',
+                `${ButtonState.sortType === 'CarKM' ? pressedStyle : ''}`
               )}
               {returnButtonTab(
-                'CC',
-                ButtonState.sortType === 'CC' ? 'mr-5' : 'hidden',
+                'CarCC',
+                ButtonState.sortType === 'CarCC' ? 'mr-5' : 'hidden',
                 `rounded-r-lg ${
-                  ButtonState.sortType === 'CC' ? pressedStyle : ''
+                  ButtonState.sortType === 'CarCC' ? pressedStyle : ''
                 }`
               )}
             </ul>
           </div>
         </div>
       </div>
-      {returnElement()}
+
+      <ReturnDisplayComponent
+        state={ButtonState.displayType}
+        data={sortedList}
+      />
     </>
   );
-
-  function returnElement() {
-    switch (ButtonState.displayType) {
-      case 'List':
-        return <CarItemsTable list={[data]} />;
-      case 'Search':
-        return <SiteContent list={data} />;
-      case 'Card':
-        return <CarItemsCards list={data} />;
-      default:
-        return <CarItemsCards list={data} />;
-    }
-  }
 
   function handleStyleClick(type: ButtonStates['types']) {
     if (type === 'Card' || type === 'List' || type === 'Search') {
@@ -118,6 +125,7 @@ export default function Content() {
       // toggle asc/desc
       setButtonState((prev) => ({
         ...prev,
+        sortType: prev.sortType,
         sortOrder: ButtonState.sortOrder === 'Asc' ? 'Desc' : 'Asc',
       }));
     } else {
@@ -145,7 +153,7 @@ export default function Content() {
           aria-current="page"
         >
           <div className="flex">
-            {text}{' '}
+            {text}
             <img
               src={ButtonState.sortOrder === 'Asc' ? asc : desc}
               className={`${icon} h-6 w-6`}

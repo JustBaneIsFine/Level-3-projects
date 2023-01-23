@@ -34,10 +34,17 @@ export interface DisplayContextType {
 
 export interface ButtonStateInterface {
   displayType: 'Card' | 'Search' | 'List';
-  sortType: 'Price' | 'Year' | 'KM' | 'CC';
+  sortType: 'CarPrice' | 'CarYear' | 'CarKM' | 'CarCC';
   sortOrder: 'Asc' | 'Desc';
 }
 
 export interface ButtonStates {
-  types: 'Card' | 'List' | 'Search' | 'Price' | 'Year' | 'KM' | 'CC';
+  types:
+    | 'Card'
+    | 'List'
+    | 'Search'
+    | 'CarPrice'
+    | 'CarYear'
+    | 'CarKM'
+    | 'CarCC';
 }
