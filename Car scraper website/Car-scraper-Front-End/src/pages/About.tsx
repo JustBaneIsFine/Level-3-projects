@@ -1,6 +1,6 @@
 export default function About({ x }: { x: string }) {
   return (
-    <div className=" m-auto mt-5 flex w-3/4 flex-col text-center text-slate-100 sm:mt-8">
+    <div className=" m-auto mt-5 flex w-3/4 flex-col text-center dark:text-slate-100 sm:mt-8">
       <div className="text-2xl sm:text-4xl">About the website</div>
       <p className="mt-2 text-sm">
         Important: This website is only used for demonstration purposes for my
