@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import carPlaceholder from '../assets/icons/car placeholder.png';
+import { useEffect, useRef, useState } from 'react';
+import carPlaceholder from '../assets/icons/car-placeholder.png';
 import { StepsInterface } from '../interfaces/StateInterfaces';
 import ButtonClassic from '../components/ButtonClassic';
 
 export default function Create({ x }: { x: string }) {
   const [steps, setSteps] = useState<StepsInterface>({} as StepsInterface);
-
+  const addPicRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     setSteps({
       step1: true,
@@ -19,13 +19,20 @@ export default function Create({ x }: { x: string }) {
     <div className="text-center">
       <div>
         <div>Create your post here:</div>
-        <div>
-          <img
-            src={carPlaceholder}
-            alt=""
-            className="m-auto rounded-3xl  shadow-xl  "
-          />
-        </div>
+
+        <img
+          src={carPlaceholder}
+          alt=""
+          className="m-auto rounded-3xl  shadow-xl  "
+        />
+        <ButtonClassic
+          st="dark:text-white"
+          name="Add picture"
+          onclick={() => {
+            addPicRef.current?.click();
+          }}
+        />
+        <input ref={addPicRef} type="file" name="" id="" className="hidden" />
       </div>
       <div>
         <div
