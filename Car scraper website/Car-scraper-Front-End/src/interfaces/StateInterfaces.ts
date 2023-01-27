@@ -48,3 +48,14 @@ export interface ButtonStates {
     | 'CarKM'
     | 'CarCC';
 }
+
+export interface AccountDisplayInterface {
+  Types: 'Overview' | 'UserPosts' | 'Favorites' | 'Settings';
+}
+
+export interface StepsInterface {
+  step1: boolean;
+  step2: boolean;
+  step3: boolean;
+  step4: boolean;
+}
