@@ -35,7 +35,7 @@ function App() {
             <Route path="/Register" element={<Register x="Register Page" />} />
             <Route path="/Login" element={<Login x="Login Page" />} />
             <Route path="/About" element={<About x="About Page" />} />
-            {/* <Route path="/Create" element={<Create />} /> */}
+            <Route path="/Create" element={<Create x="Create page" />} />
           </Routes>
         </UserContextProvider>
         <Footer />
