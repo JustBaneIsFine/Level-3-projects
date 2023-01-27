@@ -67,7 +67,7 @@ export default function Create({ x }: { x: string }) {
         <div
           className={`${
             steps.step2 ? '' : 'pointer-events-none opacity-10'
-          } border-t-0bg-slate-100 mx-3  flex flex-col justify-around  gap-2 border border-black p-5 duration-500 dark:border-white dark:bg-slate-700 sm:flex-row`}
+          } mx-3 flex flex-col  justify-around gap-2 border   border-black bg-slate-100 p-5 duration-500 dark:border-white dark:bg-slate-700 sm:flex-row`}
         >
           <div>step2</div>
           <input
@@ -132,7 +132,7 @@ export default function Create({ x }: { x: string }) {
         <div
           className={`${
             steps.step4 ? '' : 'pointer-events-none opacity-10'
-          } border-t-0bg-slate-100 mx-3 flex flex-col justify-around gap-2 rounded-b-lg border border-black p-5 duration-500 dark:border-white dark:bg-slate-700 sm:flex-row`}
+          } mx-3 flex flex-col justify-around gap-2 rounded-b-lg border  border-black bg-slate-100 p-5 duration-500 dark:border-white dark:bg-slate-700 sm:flex-row`}
         >
           <div>step4</div>
           <ButtonClassic
