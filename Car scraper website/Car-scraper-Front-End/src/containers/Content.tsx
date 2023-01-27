@@ -52,9 +52,9 @@ export default function Content() {
     <>
       <div className="h-auto w-full ">
         <div className="w-full border border-black border-opacity-20" />
-        <div className=" flex justify-between bg-gradient-to-b p-2 dark:from-slate-600 dark:to-slate-800 ">
-          <div className="flex flex-col text-center">
-            <p>Display style</p>
+        <div className="flex flex-col justify-between bg-gradient-to-b p-2 dark:from-slate-600 dark:to-slate-800 sm:flex-row">
+          <div className=" m-auto flex w-1/2 flex-col text-center sm:m-0 sm:w-auto">
+            <p className="text-sm sm:text-base">Display style</p>
 
             <ul className="mt-2 flex divide-x divide-gray-400 rounded-lg text-center   shadow  dark:divide-gray-400 ">
               {returnButtonTab(
@@ -74,7 +74,7 @@ export default function Content() {
             </ul>
           </div>
           <div className="flex flex-col text-center">
-            <p>Sort style</p>
+            <p className="text-sm sm:text-base">Sort style</p>
             <ul className=" mt-2 flex  divide-x divide-gray-400  rounded-lg  text-center shadow dark:divide-gray-400 ">
               {returnButtonTab(
                 'CarPrice',
@@ -152,7 +152,7 @@ export default function Content() {
           className={`${style}  inline-block w-full  bg-white p-2 ring-inset duration-300  hover:bg-gray-50 hover:text-gray-700 focus:outline-none  active:translate-y-0.5 active:bg-slate-300  active:shadow-inner active:shadow-slate-700 dark:bg-gray-700 dark:hover:bg-gray-700 dark:hover:text-white dark:active:text-black sm:p-4`}
           aria-current="page"
         >
-          <div className="flex">
+          <div className="flex text-sm sm:text-base">
             {text}
             <img
               src={ButtonState.sortOrder === 'Asc' ? asc : desc}
