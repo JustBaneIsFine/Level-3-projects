@@ -121,10 +121,12 @@ export default function Create({ x }: { x: string }) {
             id=""
           />
 
-          <select className="bg-slate-200 p-1 dark:bg-slate-600" required>
-            <option value="" selected>
-              Please select your currency
-            </option>
+          <select
+            className="bg-slate-200 p-1 dark:bg-slate-600"
+            required
+            defaultValue=""
+          >
+            <option value="">Please select your currency</option>
             <option value="eur">eur</option>
             <option value="rsd">rsd</option>
           </select>
