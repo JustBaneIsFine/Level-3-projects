@@ -1,6 +1,6 @@
-import ButtonClassic from '../components/ButtonClassic';
-import ButtonLink from '../components/ButtonLink';
-import ButtonClassicLink from '../components/ButtonClassicLink';
+import ButtonClassic from '../../components/Buttons/ButtonClassic';
+import ButtonLink from '../../components/Buttons/ButtonLink';
+import ButtonClassicLink from '../../components/Buttons/ButtonClassicLink';
 
 export default function LoginForm() {
   return (

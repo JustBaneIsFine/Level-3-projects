@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import carPlaceholder from '../assets/icons/car-placeholder.png';
 import { StepsInterface } from '../interfaces/StateInterfaces';
-import ButtonClassic from '../components/ButtonClassic';
+import ButtonClassic from '../components/Buttons/ButtonClassic';
 
 export default function Create({ x }: { x: string }) {
   const [steps, setSteps] = useState<StepsInterface>({} as StepsInterface);

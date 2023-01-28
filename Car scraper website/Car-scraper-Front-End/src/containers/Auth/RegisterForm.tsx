@@ -1,5 +1,5 @@
-import ButtonClassic from '../components/ButtonClassic';
-import ButtonClassicLink from '../components/ButtonClassicLink';
+import ButtonClassic from '../../components/Buttons/ButtonClassic';
+import ButtonClassicLink from '../../components/Buttons/ButtonClassicLink';
 
 export default function RegisterForm() {
   return (

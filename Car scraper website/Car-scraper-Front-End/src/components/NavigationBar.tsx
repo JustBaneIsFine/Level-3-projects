@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ButtonLink from './ButtonLink';
+import ButtonLink from './Buttons/ButtonLink';
 
 export default function NavigationBar() {
   const [toggle, setToggle] = useState(true);

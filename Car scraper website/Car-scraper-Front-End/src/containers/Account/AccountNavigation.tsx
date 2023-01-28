@@ -1,4 +1,4 @@
-import AccountNavButton from '../components/AccountNavButton';
+import AccountNavButton from '../../components/Buttons/AccountNavButton';
 
 export default function AccountNavigation({
   setDisplayState,

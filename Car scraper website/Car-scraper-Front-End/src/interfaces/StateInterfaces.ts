@@ -31,13 +31,15 @@ export interface DisplayContextType {
     React.SetStateAction<'list' | 'card' | 'search'>
   >;
 }
+export interface AccountDisplayInterface {
+  Types: 'Overview' | 'UserPosts' | 'Favorites' | 'Settings';
+}
 
 export interface ButtonStateInterface {
   displayType: 'Card' | 'Search' | 'List';
   sortType: 'CarPrice' | 'CarYear' | 'CarKM' | 'CarCC';
   sortOrder: 'Asc' | 'Desc';
 }
-
 export interface ButtonStates {
   types:
     | 'Card'
@@ -47,10 +49,6 @@ export interface ButtonStates {
     | 'CarYear'
     | 'CarKM'
     | 'CarCC';
-}
-
-export interface AccountDisplayInterface {
-  Types: 'Overview' | 'UserPosts' | 'Favorites' | 'Settings';
 }
 
 export interface StepsInterface {

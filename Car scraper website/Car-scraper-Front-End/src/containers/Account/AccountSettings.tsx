@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import userPlaceholder from '../assets/icons/user placeholder.png';
+import userPlaceholder from '@asset/user-placeholder.png';
 
 export default function AccountSettings() {
   const fileRef = useRef<HTMLInputElement | null>(null);

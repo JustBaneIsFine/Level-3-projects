@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { AccountDisplayInterface } from '../interfaces/StateInterfaces';
-import AccountOverview from '../containers/AccountOverview';
-import AccountFavorites from '../containers/AccountFavorites';
-import AccountPosts from '../containers/AccountPosts';
-import AccountSettings from '../containers/AccountSettings';
-import AccountNavigation from '../containers/AccountNavigation';
+import AccountOverview from '../containers/Account/AccountOverview';
+import AccountFavorites from '../containers/Account/AccountFavorites';
+import AccountPosts from '../containers/Account/AccountPosts';
+import AccountSettings from '../containers/Account/AccountSettings';
+import AccountNavigation from '../containers/Account/AccountNavigation';
 
 export default function UserAccount({ x }: { x: string }) {
   const [DisplayState, setDisplayState] =

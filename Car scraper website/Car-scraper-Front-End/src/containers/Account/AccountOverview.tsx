@@ -1,4 +1,4 @@
-import userPlaceholder from '../assets/icons/user placeholder.png';
+import userPlaceholder from '@asset/user-placeholder.png';
 
 export default function AccountOverview() {
   return (
